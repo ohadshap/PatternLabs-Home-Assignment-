@@ -115,11 +115,7 @@ async def verify_with_second_instance(llm: str, question: dict, model_answer: st
     prev_model_reason = model_reason
     i = 0
     llm_to_use = llm
-    # review_answer
     while i < back_and_forth_limit:
-        print('prev_model_answer', prev_model_answer)
-        print('prev_model_reason', prev_model_reason)
-        print('question', question)
         conversation_prompt = get_conversation_prompt(question, prev_model_answer, prev_model_reason)
         if llm_to_use == 'sub':
             review_answer = await call_llm(llm_sub, conversation_prompt)
@@ -153,7 +149,7 @@ async def verify_with_second_instance(llm: str, question: dict, model_answer: st
             # wait before sending another request to prevent rate limiting
             await asyncio.sleep(delay_time)
     
-    print(f"After: {back_and_forth_limit} conversations between the 2 models they did NOT agree - returning None")   
+    print(f"After: {back_and_forth_limit} conversations between the 2 models, they did NOT agree - returning None")   
     return None
 
 
