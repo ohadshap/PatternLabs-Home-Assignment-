@@ -3,25 +3,7 @@ import json
 import random
 import asyncio
 
-my_api_key = 'AIzaSyATD8M2kKqRY5LCU65YFga80TAAdZiYfhk'
-
-# create model instances
-llm_main = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    google_api_key=my_api_key,
-)
-llm_sub = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    google_api_key=my_api_key,
-)
-
-
-# templase for explenations for model - beginning of prompt, need to add at the end the actual question
-prompt_templates = {
-    "basic": "I will give you a question or sentence to complete and two possible answers. Please answer either A or B, depending on which answer is better. You may write down your reasoning but please write your final answer (either A or B) between the <answer> and </answer> tags. ",
-    "with_explain": "I will give you a question or sentence to complete and two possible answers. Please answer either A or B, depending on which answer is better AND write down your reasoning but please write your final answer (either A or B) between the <answer> and </answer> tags and the reasoning between <reason> and </reason> tags. ",
-    "converse": "I  will give you a question or sentence to complete, two possible choices and an answer given by a different model and its reasoning. Please answer either Correct or Incorrect depending if you think the other model gave a correct or incorrect choice AND write down your reasoning but please write your final answer (either Correct or Incorrect ) between the <answer> and </answer> tags and the reasoning between <reason> and </reason> tags. "
-}
+my_api_key = 'ENTER-KEY'
 
 
 ###########
@@ -50,6 +32,23 @@ delay_time = 3
 # the number of itteration the models can conflict each other - if they did not agree return first option
 back_and_forth_limit = 4 
 
+# create model instances
+llm_main = ChatGoogleGenerativeAI(
+    model="gemini-pro",
+    google_api_key=my_api_key,
+)
+llm_sub = ChatGoogleGenerativeAI(
+    model="gemini-pro",
+    google_api_key=my_api_key,
+)
+
+
+# templase for explenations for model - beginning of prompt, need to add at the end the actual question
+prompt_templates = {
+    "basic": "I will give you a question or sentence to complete and two possible answers. Please answer either A or B, depending on which answer is better. You may write down your reasoning but please write your final answer (either A or B) between the <answer> and </answer> tags. ",
+    "with_explain": "I will give you a question or sentence to complete and two possible answers. Please answer either A or B, depending on which answer is better AND write down your reasoning but please write your final answer (either A or B) between the <answer> and </answer> tags and the reasoning between <reason> and </reason> tags. ",
+    "converse": "I  will give you a question or sentence to complete, two possible choices and an answer given by a different model and its reasoning. Please answer either Correct or Incorrect depending if you think the other model gave a correct or incorrect choice AND write down your reasoning but please write your final answer (either Correct or Incorrect ) between the <answer> and </answer> tags and the reasoning between <reason> and </reason> tags. "
+}
 
 
 # get fields from question object (which we get from the file) and prepare question string
