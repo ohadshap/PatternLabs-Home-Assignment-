@@ -9,9 +9,8 @@ my_api_key = 'ENTER-KEY'
 ###########
 #  SELECT - what part of the home assignment you want to check
 ###########
-
-# the Home Assignment part to test: 1 for part 1 anything else for part 2
-part_to_test = 2 
+# input: 1 for part 1 / anything else for part 2
+part_to_test = 1 
 
 
 ###########
