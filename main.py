@@ -24,11 +24,32 @@ prompt_templates = {
 }
 
 
-number_of_questions_to_ask = 50 # number of questions to send
-send_asyncly = False # should use async calls or should use delayed mechanizm - to prevent reaching free tier rate limit
-delay_time = 3 # delay in seconds between calls to llm - used only if send_asyncly = False
-back_and_forth_limit = 4 # the number of itteration the models can conflict each other - if they did not agree return first option
-part_to_test = 1 # the Home Assignment part to test: 1 for part 1 anything else for part 2
+###########
+#  SELECT - what part of the home assignment you want to check
+###########
+
+# the Home Assignment part to test: 1 for part 1 anything else for part 2
+part_to_test = 2 
+
+
+###########
+# Project Settings
+###########
+
+# number of questions to send
+number_of_questions_to_ask = 50
+
+# should use async calls or should use delayed mechanizm - to prevent reaching free tier rate limit
+# should stay false for free tier (rate limiting issues)
+send_asyncly = False 
+
+# delay in seconds between calls to llm
+# used only if send_asyncly = False
+delay_time = 3 
+
+# the number of itteration the models can conflict each other - if they did not agree return first option
+back_and_forth_limit = 4 
+
 
 
 # get fields from question object (which we get from the file) and prepare question string
@@ -98,6 +119,9 @@ async def verify_with_second_instance(llm: str, question: dict, model_answer: st
     llm_to_use = llm
     # review_answer
     while i < back_and_forth_limit:
+        print('prev_model_answer', prev_model_answer)
+        print('prev_model_reason', prev_model_reason)
+        print('question', question)
         conversation_prompt = get_conversation_prompt(question, prev_model_answer, prev_model_reason)
         if llm_to_use == 'sub':
             review_answer = await call_llm(llm_sub, conversation_prompt)
@@ -110,15 +134,22 @@ async def verify_with_second_instance(llm: str, question: dict, model_answer: st
         extracted_reason = extract_result(review_answer.content, '<reason>', '</reason>')
         
         if extracted_answer == 'Correct':
-            print('MODELS AGREE!!!', model_answer)
-            return model_answer
+            print('both-instances-aggreed', prev_model_answer)
+            return prev_model_answer
         else:
+            print('instances-did-not-agree', {
+                "extracted_reason": extracted_reason,
+                "prev_model_answer": prev_model_answer,
+                "prev_model_reason": prev_model_reason,
+                "extracted_answer": extracted_answer,
+                })
+            
             # update values for next itteration
-            print('MODELS DID NOT AGREE --- prev_model_answer', prev_model_answer)
-            print('MODELS DID NOT AGREE --- prev_model_reason', prev_model_reason)
-            print('MODELS DID NOT AGREE --- extracted_answer', extracted_answer)
-            print('MODELS DID NOT AGREE --- extracted_reason', extracted_reason)
-            prev_model_answer = extracted_answer
+            if prev_model_answer == 'A':
+                prev_model_answer = 'B'
+            else:
+                prev_model_answer = 'A'
+            
             prev_model_reason = extracted_reason
             i += 1
             # wait before sending another request to prevent rate limiting
